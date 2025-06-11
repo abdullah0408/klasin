@@ -59,8 +59,6 @@ export async function GET(req: Request) {
       },
     });
 
-    console.log("[GET /api/course/material/favorite] User ID:", userId);
-
     // Return the list of favorite materials
     return NextResponse.json(favoriteMaterials, { status: 200 });
   } catch (error) {
