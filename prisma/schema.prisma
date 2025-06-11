@@ -28,9 +28,10 @@ model Course {
   title String
   code  String @unique
 
-  users       User[]       @relation("UserCourses")
+  users       User[]         @relation("UserCourses")
   courseViews CourseView[]
   materials   Material[]
+  groups      ContantGroup[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -47,15 +48,18 @@ model CourseView {
 }
 
 model Material {
-  id          String  @id @default(cuid())
+  id          String       @id @default(cuid())
   title       String
   description String?
   content     String?
   fileUrl     String
+  type        MaterialType
 
   courseId String
+  groupId  String?
 
   course       Course             @relation(fields: [courseId], references: [id])
+  group        ContantGroup?      @relation(fields: [groupId], references: [id])
   MaterialView MaterialView[]
   favorite     FavoriteMaterial[]
 
@@ -84,4 +88,38 @@ model FavoriteMaterial {
   updatedAt DateTime @updatedAt
 
   @@id([userId, materialId])
+}
+
+model ContantGroup {
+  id          String  @id @default(cuid())
+  title       String
+  description String?
+
+  courseId      String
+  parentGroupId String?
+
+  course      Course         @relation(fields: [courseId], references: [id])
+  parentGroup ContantGroup?  @relation("SubGroups", fields: [parentGroupId], references: [id])
+  subGroups   ContantGroup[] @relation("SubGroups")
+
+  materials Material[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+enum MaterialType {
+  TEXT
+  FILE
+  VIDEO
+  LINK
+  PDF
+  AUDIO
+  IMAGE
+  CSV
+  PPT
+  DOCX
+  XLSX
+  ZIP
+  OTHER
 }
