@@ -14,6 +14,74 @@ model User {
   name    String?
   image   String?
 
+  courses          Course[]           @relation("UserCourses")
+  courseViews      CourseView[]
+  MaterialView     MaterialView[]
+  favoriteMaterial FavoriteMaterial[]
+
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+}
+
+model Course {
+  id    String @id @default(cuid())
+  title String
+  code  String @unique
+
+  users       User[]       @relation("UserCourses")
+  courseViews CourseView[]
+  materials   Material[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model CourseView {
+  id       String   @id @default(cuid())
+  userId   String
+  courseId String
+  viewedAt DateTime @default(now())
+
+  user   User   @relation(fields: [userId], references: [clerkId])
+  course Course @relation(fields: [courseId], references: [id])
+}
+
+model Material {
+  id          String  @id @default(cuid())
+  title       String
+  description String?
+  content     String?
+  fileUrl     String
+
+  courseId String
+
+  course       Course             @relation(fields: [courseId], references: [id])
+  MaterialView MaterialView[]
+  favorite     FavoriteMaterial[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model MaterialView {
+  id         String   @id @default(cuid())
+  userId     String
+  materialId String
+  viewedAt   DateTime @default(now())
+
+  user     User     @relation(fields: [userId], references: [clerkId])
+  material Material @relation(fields: [materialId], references: [id])
+}
+
+model FavoriteMaterial {
+  userId     String
+  materialId String
+
+  user     User     @relation(fields: [userId], references: [clerkId])
+  material Material @relation(fields: [materialId], references: [id])
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@id([userId, materialId])
 }
