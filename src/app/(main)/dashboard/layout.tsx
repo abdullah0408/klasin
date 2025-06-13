@@ -1,6 +1,7 @@
 import SidebarLeft from "@/components/SidebarLeft";
 import SidebarRight from "@/components/SidebarRight";
 import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
+import ViewTracker from "@/components/ViewTracker";
 import { NavigationProvider } from "@/contexts/NavigationContext";
 
 export default function RootLayout({
@@ -17,6 +18,7 @@ export default function RootLayout({
           <SidebarRight />
         </NavigationProvider>
       </SidebarProvider>
+      <ViewTracker for={"course"}/>
     </div>
   );
 }

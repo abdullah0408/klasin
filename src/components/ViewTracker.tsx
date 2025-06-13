@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import { useParams } from "next/navigation";
 
 type ViewTrackerProps = {
@@ -9,22 +9,37 @@ type ViewTrackerProps = {
 
 const ViewTracker = ({ for: type }: ViewTrackerProps) => {
   const params = useParams();
+  const lastTrackedId = useRef<string | null>(null);
 
   useEffect(() => {
-    const id = type === "course" ? params.courseId : params.materialId;
-    if (!id || typeof id !== "string") return;
+    if (type === "course") {
+      const courseId = params.courseId;
+      if (!courseId || typeof courseId !== "string") return;
 
-    const endpoint =
-      type === "course"
-        ? `/api/course/view?courseId=${id}`
-        : `/api/course/material/view?materialId=${id}`;
+      if (lastTrackedId.current === courseId) return;
+      lastTrackedId.current = courseId;
 
-    fetch(endpoint, {
-      method: "POST",
-    }).catch((err) => {
-      console.error(`Failed to track ${type} view:`, err);
-    });
-  }, [type, params]);
+      fetch(`/api/course/view?courseId=${courseId}`, {
+        method: "POST",
+      }).catch((err) => {
+        console.error("Failed to track course view:", err);
+      });
+    }
+
+    if (type === "material") {
+      const materialId = params.materialId;
+      if (!materialId || typeof materialId !== "string") return;
+
+      if (lastTrackedId.current === materialId) return; // already tracked
+      lastTrackedId.current = materialId;
+
+      fetch(`/api/course/material/view?materialId=${materialId}`, {
+        method: "POST",
+      }).catch((err) => {
+        console.error("Failed to track material view:", err);
+      });
+    }
+  }, [type, params.courseId, params.materialId]);
 
   return null;
 };
