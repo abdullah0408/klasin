@@ -36,7 +36,7 @@ export default function FloatingFileStructurePopover() {
           side="top"
           align="end"
           sideOffset={8}
-          className="w-fit max-w-xs p-4"
+          className="w-fit max-w-xs max-h-[80vh] overflow-y-auto p-4"
         >
           {isLoading ? (
             <div className="space-y-2">
