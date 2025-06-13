@@ -6,7 +6,7 @@ export default function RootLayout({
 }: Readonly<{ children: React.ReactNode }>) {
   return (
     <FileStructureProvider>
-      <div className="relative min-h-screen">
+      <div className="container mx-auto max-w-7xl px-4 py-6">
         {children}
         <FloatingFileStructurePopover />
       </div>

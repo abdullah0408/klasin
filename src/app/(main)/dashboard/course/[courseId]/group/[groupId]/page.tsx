@@ -1,14 +1,14 @@
 import { prisma } from "@/lib/prisma";
+import ItemCard from "@/components/ItemCard";
 import React from "react";
 import CourseDashboard from "@/components/CourseDashboard";
-import FilePreviewDialog from "@/components/FilePreviewDialog";
 
 export default async function CourseDashboardPage({
   params,
 }: {
-  params: Promise<{ courseId: string }>;
+  params: Promise<{ courseId: string; groupId: string }>;
 }) {
-  const { courseId } = await params;
+  const { courseId, groupId } = await params;
 
   //
   // Fetch root-level groups
@@ -16,7 +16,7 @@ export default async function CourseDashboardPage({
   const groups = await prisma.contantGroup.findMany({
     where: {
       courseId,
-      parentGroupId: null,
+      parentGroupId: groupId,
     },
   });
 
@@ -26,7 +26,7 @@ export default async function CourseDashboardPage({
   const materials = await prisma.material.findMany({
     where: {
       courseId,
-      groupId: null,
+      groupId,
     },
   });
 

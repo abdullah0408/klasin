@@ -1,13 +1,9 @@
-import ViewTracker from "@/components/ViewTracker";
-import React from "react";
+import React from 'react'
 
 const page = () => {
   return (
-    <div>
-      pagemmm
-      <ViewTracker for="material" />
-    </div>
-  );
-};
+    <div>page</div>
+  )
+}
 
-export default page;
+export default page

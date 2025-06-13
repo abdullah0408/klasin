@@ -53,7 +53,7 @@ model Material {
   description String?
   content     String?
   fileUrl     String
-  type        MaterialType
+  type        MaterialType @default(File)
 
   courseId String
   groupId  String?
@@ -97,6 +97,7 @@ model ContantGroup {
 
   courseId      String
   parentGroupId String?
+  type          String @default("Folder")
 
   course      Course         @relation(fields: [courseId], references: [id])
   parentGroup ContantGroup?  @relation("SubGroups", fields: [parentGroupId], references: [id])
@@ -109,17 +110,6 @@ model ContantGroup {
 }
 
 enum MaterialType {
-  TEXT
-  FILE
-  VIDEO
-  LINK
-  PDF
-  AUDIO
-  IMAGE
-  CSV
-  PPT
-  DOCX
-  XLSX
-  ZIP
-  OTHER
+  File
+  Zip
 }
