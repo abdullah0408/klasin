@@ -17,7 +17,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "KaslIN",
+  title: "Zhi",
   description: "A course material sharing platform",
 };
 

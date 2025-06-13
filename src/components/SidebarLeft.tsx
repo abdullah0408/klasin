@@ -33,19 +33,19 @@ const SidebarLeft = () => {
           <SidebarMenuItem>
             <SidebarMenuButton
               size="lg"
-              className="flex items-center justify-center"
+              className="flex items-center justify-center hover:bg-transparent focus:bg-transparent active:bg-transparent"
               asChild
             >
               <Link
                 href="/dashboard"
-                className="block max-h-12 overflow-hidden"
+                className="block max-h-12 overflow-hidden hover:bg-transparent focus:bg-transparent active:bg-transparent"
               >
                 <Image
-                  src="/logo.png"
-                  alt="Klasin Logo"
-                  width={245}
-                  height={93}
-                  className="h-[245px] w-[93px] object-contain"
+                  src="/logo.jpg"
+                  alt="Zhi Logo"
+                  width={120}
+                  height={60}
+                  className="object-contain"
                 />
               </Link>
             </SidebarMenuButton>
