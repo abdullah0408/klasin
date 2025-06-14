@@ -23,11 +23,9 @@ export default function FilePreviewDialog({
 }) {
   const viewerUrl = material?.fileUrl
     ? `https://docs.google.com/viewerng/viewer?embedded=true&url=${encodeURIComponent(
-        `https://pub-cf3bbc29c390439db6d1b0fa281920af.r2.dev/${material.fileUrl}`
+        `${process.env.NEXT_PUBLIC_R2_Public_URL}/${material.fileUrl}`
       )}`
     : null;
-
-  console.log("Viewer URL:", viewerUrl);
 
   return (
     <Dialog
@@ -53,7 +51,7 @@ export default function FilePreviewDialog({
         {material?.fileUrl && (
           <div className="flex gap-2 justify-end px-4 py-3">
             <a
-              href={`https://pub-cf3bbc29c390439db6d1b0fa281920af.r2.dev/${material.fileUrl}`}
+              href={`${process.env.NEXT_PUBLIC_R2_Public_URL}/${material.fileUrl}`}
               download
               target="_blank"
             >
@@ -64,7 +62,7 @@ export default function FilePreviewDialog({
             </a>
 
             <Link
-              href={`/courses/${material.courseId}/materials/${material.id}`}
+              href={`/dashboard/course/${material.courseId}/material/${material.id}`}
             >
               <Button variant="default" className="cursor-pointer">
                 <LayoutPanelTop className="w-4 h-4" />

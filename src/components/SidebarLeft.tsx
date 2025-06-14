@@ -33,12 +33,12 @@ const SidebarLeft = () => {
           <SidebarMenuItem>
             <SidebarMenuButton
               size="lg"
-              className="flex items-center justify-center hover:bg-transparent focus:bg-transparent active:bg-transparent"
+              className="flex items-center justify-center hover:bg-transparent focus:bg-transparent active:bg-transparent cursor-pointer"
               asChild
             >
               <Link
                 href="/dashboard"
-                className="block max-h-12 overflow-hidden hover:bg-transparent focus:bg-transparent active:bg-transparent"
+                className="block max-h-12 overflow-hidden hover:bg-transparent focus:bg-transparent active:bg-transparent cursor-pointer"
               >
                 <Image
                   src="/logo.jpg"
