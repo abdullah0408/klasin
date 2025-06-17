@@ -7,7 +7,6 @@ const Page = async () => {
   const { userId } = await auth();
   if (!userId) redirect("/sign-in");
 
-  // 1. Get recent viewed courses
   const recentCourseViews = await prisma.$queryRawUnsafe<
     { courseId: string; viewedAt: Date }[]
   >(
@@ -39,7 +38,6 @@ const Page = async () => {
     .filter((c): c is NonNullable<typeof c> => Boolean(c))
     .sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime()); // Sort by latest
 
-  // 2. Get recent viewed materials
   const recentMaterialViews = await prisma.$queryRawUnsafe<
     { materialId: string; viewedAt: Date }[]
   >(
@@ -57,7 +55,17 @@ const Page = async () => {
   const materialIds = recentMaterialViews.map((r) => r.materialId);
   const unorderedMaterials = await prisma.material.findMany({
     where: { id: { in: materialIds } },
-    include: { course: true },
+    include: {
+      course: true,
+      ReadMaterial: {
+        where: { userId },
+        select: { userId: true },
+      },
+      bookmarked: {
+        where: { userId },
+        select: { userId: true },
+      },
+    },
   });
 
   const orderedMaterials = materialIds
@@ -73,7 +81,6 @@ const Page = async () => {
     .filter((m): m is NonNullable<typeof m> => Boolean(m))
     .sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime()); // Sort by latest
 
-  // 3. Bookmarked materials
   const bookmarked = await prisma.bookmarkedMaterial.findMany({
     where: {
       userId,
@@ -92,6 +99,14 @@ const Page = async () => {
       material: {
         include: {
           course: true,
+          ReadMaterial: {
+            where: { userId },
+            select: { userId: true },
+          },
+          bookmarked: {
+            where: { userId },
+            select: { userId: true },
+          },
         },
       },
     },
