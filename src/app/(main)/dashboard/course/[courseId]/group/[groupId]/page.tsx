@@ -1,7 +1,8 @@
 import { prisma } from "@/lib/prisma";
-import ItemCard from "@/components/ItemCard";
 import React from "react";
 import CourseDashboard from "@/components/CourseDashboard";
+import { auth } from "@clerk/nextjs/server";
+import { redirect } from "next/navigation";
 
 export default async function CourseDashboardPage({
   params,
@@ -9,7 +10,11 @@ export default async function CourseDashboardPage({
   params: Promise<{ courseId: string; groupId: string }>;
 }) {
   const { courseId, groupId } = await params;
+  const { userId } = await auth();
 
+  if (!userId) {
+    return redirect("/sign-in");
+  }
   //
   // Fetch root-level groups
   //
@@ -27,6 +32,16 @@ export default async function CourseDashboardPage({
     where: {
       courseId,
       groupId,
+    },
+    include: {
+      ReadMaterial: {
+        where: { userId },
+        select: { userId: true },
+      },
+      bookmarked: {
+        where: { userId },
+        select: { userId: true },
+      }
     },
   });
 

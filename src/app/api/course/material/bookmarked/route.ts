@@ -3,14 +3,14 @@ import { auth } from "@clerk/nextjs/server";
 import { NextResponse } from "next/server";
 
 /**
- * GET /api/course/material/favorite
+ * GET /api/course/material/bookmarked
  *
- * This endpoint returns all favorite materials for the currently authenticated Clerk user.
+ * This endpoint returns all bookmarked materials for the currently authenticated Clerk user.
  * It ensures the returned materials belong to courses the user is enrolled in.
  * Includes material ID, title, file URL, and the associated course title.
  *
  * Response codes:
- *   200 – OK, returns the list of favorite materials
+ *   200 – OK, returns the list of bookmarked materials
  *   401 – Unauthorized (no valid Clerk session)
  *   500 – Internal Server Error (unexpected exception)
  */
@@ -25,11 +25,11 @@ export async function GET(req: Request) {
 
   try {
     //
-    // Fetch all favorite materials where:
-    // - The favorite is owned by the current user
+    // Fetch all bookmarked materials where:
+    // - The bookmarked is owned by the current user
     // - The associated material belongs to a course the user is enrolled in
     //
-    const favoriteMaterials = await prisma.favoriteMaterial.findMany({
+    const bookmarkedMaterial = await prisma.bookmarkedMaterial.findMany({
       where: {
         userId: userId,
         material: {
@@ -59,11 +59,11 @@ export async function GET(req: Request) {
       },
     });
 
-    // Return the list of favorite materials
-    return NextResponse.json(favoriteMaterials, { status: 200 });
+    // Return the list of bookmarked materials
+    return NextResponse.json(bookmarkedMaterial, { status: 200 });
   } catch (error) {
     // If anything goes wrong (e.g., database connectivity), log and return 500.
-    console.error("Error fetching favorite materials: ", error);
+    console.error("Error fetching bookmarked materials: ", error);
     return NextResponse.json(
       { error: "Internal Server Error" },
       { status: 500 }

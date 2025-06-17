@@ -1,7 +1,12 @@
 "use client";
 
 import React, { useState, useMemo } from "react";
-import { ContantGroup, Material, MaterialType } from "@/generated/prisma";
+import {
+  ContantGroup,
+  Material,
+  MaterialType,
+  ReadMaterial,
+} from "@/generated/prisma";
 import ItemCard from "@/components/ItemCard";
 import PreviewDialog from "@/components/FilePreviewDialog";
 import FileUploadDialog from "@/components/FileUploadDialog";
@@ -32,7 +37,11 @@ export default function CourseDashboard({
   materials,
 }: {
   groups: ContantGroup[];
-  materials: Material[];
+  materials: (Material & {
+    ReadMaterial?: { userId: string }[];
+  } & {
+    bookmarked?: { userId: string }[];
+  })[];
 }) {
   const [groupData, setGroupData] = useState(groups);
   const [materialData, setMaterialData] = useState(materials);
@@ -114,7 +123,7 @@ export default function CourseDashboard({
       });
   }, [items, searchTerm, filterType, sortOption]);
 
-  const controlClass = "max-w-[100px] flex-1 text-sm";
+  const controlClass = "max-w-[100px] flex-1 text-sm border-foreground-";
 
   return (
     <>
@@ -124,7 +133,7 @@ export default function CourseDashboard({
             placeholder="Search..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            className="w-full text-sm"
+            className="w-full text-sm border-foreground-"
           />
         </div>
 

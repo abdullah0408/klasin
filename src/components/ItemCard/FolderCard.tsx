@@ -15,6 +15,7 @@ import {
   MoreVertical,
   Folder as FolderIcon,
   Paperclip,
+  Trash2,
 } from "lucide-react";
 import {
   DropdownMenu,
@@ -43,9 +44,9 @@ const FolderCard = ({ group }: { group: ContantGroup }) => {
           onDoubleClick={handleDoubleClick}
           className="hover:shadow-md transition-all duration-200 hover:bg-accent/50 cursor-pointer border border-border/50 relative py-0"
         >
-          <div className="absolute top-0 left-0.5">
+          {/* <div className="absolute top-0 left-0.5">
             <Paperclip className="w-4 h-4 text-primary -rotate-90" />
-          </div>
+          </div> */}
           <CardContent className="flex items-center p-4 space-x-3">
             <div className="flex-shrink-0">
               {isHovered ? <FolderOpen className="text-primary" /> : <Folder />}
@@ -90,17 +91,28 @@ const FolderCard = ({ group }: { group: ContantGroup }) => {
                     <FolderIcon className="w-4 h-4 mr-2" />
                     Open
                   </DropdownMenuItem>
+                  {/* Destructive action last */}
+                  <DropdownMenuItem className="!text-red-500 hover:!text-red-600 hover:!bg-[rgba(239,68,68,0.1)]">
+                    <Trash2 className="w-4 h-4 mr-2 text-red-500 hover:!text-red-600" />
+                    Delete
+                  </DropdownMenuItem>
                 </DropdownMenuContent>
               </DropdownMenu>
             </div>
           </CardContent>
         </Card>
       </ContextMenuTrigger>
-
       <ContextMenuContent className="w-48">
+        {/* Primary actions */}
         <ContextMenuItem onClick={handleDoubleClick}>
           <FolderIcon className="w-4 h-4 mr-2" />
           Open
+        </ContextMenuItem>
+
+        {/* Destructive action */}
+        <ContextMenuItem className="!text-red-500 hover:!text-red-600 hover:!bg-[rgba(239,68,68,0.1)]">
+          <Trash2 className="w-4 h-4 mr-2 text-red-500 hover:!text-red-600" />
+          Delete
         </ContextMenuItem>
       </ContextMenuContent>
     </ContextMenu>

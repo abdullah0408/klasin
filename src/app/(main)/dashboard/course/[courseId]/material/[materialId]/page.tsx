@@ -46,7 +46,7 @@ export default async function Page({
     : null;
 
   return (
-    <div className="relative w-full flex flex-col h-[calc(100vh-3rem)]">
+    <div className="relative w-full flex flex-col h-[85vh]">
       {viewerUrl ? (
         <iframe
           src={viewerUrl}

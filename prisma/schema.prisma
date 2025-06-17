@@ -19,7 +19,8 @@ model User {
   courses          Course[]           @relation("UserCourses")
   courseViews      CourseView[]
   MaterialView     MaterialView[]
-  favoriteMaterial FavoriteMaterial[]
+  bookmarkedMaterial BookmarkedMaterial[]
+  readMaterial ReadMaterial[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -63,7 +64,8 @@ model Material {
   course       Course             @relation(fields: [courseId], references: [id])
   group        ContantGroup?      @relation(fields: [groupId], references: [id])
   MaterialView MaterialView[]
-  favorite     FavoriteMaterial[]
+  bookmarked     BookmarkedMaterial[]
+  ReadMaterial ReadMaterial[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -79,7 +81,20 @@ model MaterialView {
   material Material @relation(fields: [materialId], references: [id])
 }
 
-model FavoriteMaterial {
+model BookmarkedMaterial {
+  userId     String
+  materialId String
+
+  user     User     @relation(fields: [userId], references: [clerkId])
+  material Material @relation(fields: [materialId], references: [id])
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@id([userId, materialId])
+}
+
+model ReadMaterial {
   userId     String
   materialId String
 

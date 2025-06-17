@@ -9,7 +9,14 @@ import {
   ContextMenuItem,
 } from "../ui/context-menu";
 import { Card, CardContent } from "../ui/card";
-import { FileArchive, MoreVertical, File, Download } from "lucide-react";
+import {
+  FileArchive,
+  MoreVertical,
+  Download,
+  BookmarkCheck,
+  Bookmark,
+  Trash2,
+} from "lucide-react";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -19,10 +26,27 @@ import {
 import { Button } from "../ui/button";
 import { formatDistanceToNow } from "date-fns";
 import { Material } from "@/generated/prisma";
+import { Switch } from "../ui/switch";
+import { Label } from "../ui/label";
 
-const ZipCard = ({ material }: { material: Material }) => {
+const ZipCard = ({
+  material,
+}: {
+  material: Material & {
+    ReadMaterial?: { userId: string }[];
+    bookmarked?: { userId: string }[];
+  };
+}) => {
   const [isHovered, setIsHovered] = useState(false);
   const router = useRouter();
+  const [isRead, setIsRead] = useState(
+    !!((material.ReadMaterial?.length ?? 0) > 0)
+  );
+  const [isBookMarked, setIsBookMarked] = useState(
+    !!((material.bookmarked?.length ?? 0) > 0)
+  );
+  const [readLoading, setReadLoading] = useState(false);
+  const [bookmarkLoading, setBookmarkLoading] = useState(false);
 
   const handleOpen = () => {
     router.push(
@@ -30,12 +54,60 @@ const ZipCard = ({ material }: { material: Material }) => {
     );
   };
 
-  const handleDownload = (e?: React.MouseEvent) => {
-    e?.stopPropagation();
+  const handleDownload = () => {
     const link = document.createElement("a");
-    link.href = material.fileUrl;
+    link.href = `${process.env.NEXT_PUBLIC_R2_Public_URL}/${material.fileUrl}`;
     link.download = material.title;
+    link.target = "_blank";
+    document.body.appendChild(link);
     link.click();
+    document.body.removeChild(link);
+  };
+
+  const toggleRead = async (val: boolean) => {
+    try {
+      setReadLoading(true);
+      const res = await fetch("/api/material/read", {
+        method: "POST",
+        body: JSON.stringify({
+          materialId: material.id,
+          isRead: val,
+        }),
+      });
+
+      if (res.ok) {
+        setIsRead(val);
+      } else {
+        console.error("Failed to update read status");
+      }
+    } catch (err) {
+      console.error("Error toggling read status:", err);
+    } finally {
+      setReadLoading(false);
+    }
+  };
+
+  const toggleBookmark = async (val: boolean) => {
+    try {
+      setBookmarkLoading(true);
+      const res = await fetch("/api/material/bookmark", {
+        method: "POST",
+        body: JSON.stringify({
+          materialId: material.id,
+          isRead: val,
+        }),
+      });
+
+      if (res.ok) {
+        setIsBookMarked(val);
+      } else {
+        console.error("Failed to update bookmark status");
+      }
+    } catch (err) {
+      console.error("Error toggling bookmark status:", err);
+    } finally {
+      setBookmarkLoading(false);
+    }
   };
 
   return (
@@ -93,19 +165,56 @@ const ZipCard = ({ material }: { material: Material }) => {
                     <MoreVertical className="w-4 h-4" />
                   </Button>
                 </DropdownMenuTrigger>
-                <DropdownMenuContent align="end" className="w-48">
+                <DropdownMenuContent align="end" className="w-56">
+                  <DropdownMenuItem asChild>
+                    <a
+                      href={`${process.env.NEXT_PUBLIC_R2_Public_URL}/${material.fileUrl}`}
+                      download
+                      target="_blank"
+                      className="flex items-center w-full"
+                    >
+                      <Download className="w-4 h-4 mr-2" />
+                      Download
+                    </a>
+                  </DropdownMenuItem>
+
+                  {/* Read/Bookmark toggles */}
+                  <div className="flex items-center px-2 py-1.5 space-x-2 text-sm cursor-default select-none">
+                    <Switch
+                      id="read-switch"
+                      checked={isRead}
+                      onCheckedChange={(val) => toggleRead(val)}
+                      disabled={readLoading}
+                      className="cursor-pointer border-foreground-"
+                    />
+                    <Label htmlFor="read-switch" className="cursor-pointer">
+                      {isRead ? "Mark as Unread" : "Mark as Read"}
+                    </Label>
+                  </div>
                   <DropdownMenuItem
+                    disabled={bookmarkLoading}
+                    className={
+                      bookmarkLoading ? "opacity-50 cursor-not-allowed" : ""
+                    }
                     onClick={(e) => {
                       e.stopPropagation();
-                      handleOpen();
+                      if (!bookmarkLoading) {
+                        toggleBookmark(!isBookMarked);
+                      }
                     }}
                   >
-                    <File className="w-4 h-4 mr-2" />
-                    Open
+                    {isBookMarked ? (
+                      <BookmarkCheck className="w-4 h-4 mr-2 text-primary" />
+                    ) : (
+                      <Bookmark className="w-4 h-4 mr-2" />
+                    )}
+                    {isBookMarked ? "Remove Bookmark" : "Add to Bookmarks"}
                   </DropdownMenuItem>
-                  <DropdownMenuItem onClick={handleDownload}>
-                    <Download className="w-4 h-4 mr-2" />
-                    Download
+
+                  {/* Destructive action last */}
+                  <DropdownMenuItem className="!text-red-500 hover:!text-red-600 hover:!bg-[rgba(239,68,68,0.1)]">
+                    <Trash2 className="w-4 h-4 mr-2 text-red-500 hover:!text-red-600" />
+                    Delete
                   </DropdownMenuItem>
                 </DropdownMenuContent>
               </DropdownMenu>
@@ -115,13 +224,54 @@ const ZipCard = ({ material }: { material: Material }) => {
       </ContextMenuTrigger>
 
       <ContextMenuContent className="w-48">
-        <ContextMenuItem onClick={handleOpen}>
-          <File className="w-4 h-4 mr-2" />
-          Open
+        <ContextMenuItem asChild>
+          <a
+            href={`${process.env.NEXT_PUBLIC_R2_Public_URL}/${material.fileUrl}`}
+            download
+            target="_blank"
+            className="flex items-center w-full"
+          >
+            <Download className="w-4 h-4 mr-2" />
+            Download
+          </a>
         </ContextMenuItem>
-        <ContextMenuItem onClick={() => handleDownload()}>
-          <Download className="w-4 h-4 mr-2" />
-          Download
+
+        {/* Toggle switches */}
+        <div className="flex items-center px-2 py-1.5 space-x-2 text-sm cursor-default select-none">
+          <Switch
+            id="read-switch"
+            checked={isRead}
+            onCheckedChange={(val) => toggleRead(val)}
+            disabled={readLoading}
+            className="cursor-pointer border-foreground-"
+          />
+          <Label htmlFor="read-switch" className="cursor-pointer">
+            {isRead ? "Mark as Unread" : "Mark as Read"}
+          </Label>
+        </div>
+
+        <ContextMenuItem
+          disabled={bookmarkLoading}
+          className={bookmarkLoading ? "opacity-50 cursor-not-allowed" : ""}
+          onClick={(e) => {
+            e.stopPropagation();
+            if (!bookmarkLoading) {
+              toggleBookmark(!isBookMarked);
+            }
+          }}
+        >
+          {isBookMarked ? (
+            <BookmarkCheck className="w-4 h-4 mr-2 text-primary" />
+          ) : (
+            <Bookmark className="w-4 h-4 mr-2" />
+          )}
+          {isBookMarked ? "Remove Bookmark" : "Add to Bookmarks"}
+        </ContextMenuItem>
+
+        {/* Destructive action */}
+        <ContextMenuItem className="!text-red-500 hover:!text-red-600 hover:!bg-[rgba(239,68,68,0.1)]">
+          <Trash2 className="w-4 h-4 mr-2 text-red-500 hover:!text-red-600" />
+          Delete
         </ContextMenuItem>
       </ContextMenuContent>
     </ContextMenu>

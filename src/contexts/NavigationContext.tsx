@@ -17,8 +17,8 @@ interface NavigationContextType {
     courseId: string;
     courseTitle: string;
   })[];
-  isFavoriteMaterialsLoading: boolean;
-  favoriteMaterials: {
+  isBookmarkedMaterialsLoading: boolean;
+  bookmarkedMaterials: {
     materialId: string;
     material: {
       id: string;
@@ -27,7 +27,7 @@ interface NavigationContextType {
       course: { title: string };
     };
   }[];
-  refreshFavoriteMaterials: () => void;
+  refreshBookmarkedMaterials: () => void;
 }
 
 export const NavigationContext = createContext<
@@ -38,7 +38,7 @@ export const NavigationContext = createContext<
  * NavigationProvider tracks and manages:
  *   - Selected courses for the user
  *   - Recently viewed courses and materials
- *   - Favorite materials
+ *   - Bookmarked materials
  *
  * Data is fetched from corresponding API endpoints. Context consumers can access this data
  * and loading states, and can trigger refresh manually.
@@ -78,10 +78,10 @@ export const NavigationProvider = ({
     })[]
   >([]);
 
-  // Favorite materials
-  const [isFavoriteMaterialsLoading, setIsFavoriteMaterialsLoading] =
+  // Bookmarked materials
+  const [isBookmarkedMaterialsLoading, setIsBookmarkedMaterialsLoading] =
     useState(true);
-  const [favoriteMaterials, setFavoriteMaterials] = useState<
+  const [bookmarkedMaterials, setBookmarkedMaterials] = useState<
     {
       materialId: string;
       material: {
@@ -94,20 +94,20 @@ export const NavigationProvider = ({
   >([]);
 
   /**
-   * Fetch favorite materials for the current user.
+   * Fetch bookmarked materials for the current user.
    */
-  const fetchFavoriteMaterials = async () => {
+  const fetchBookmarkedMaterials = async () => {
     try {
-      const res = await fetch("/api/course/material/favorite");
+      const res = await fetch("/api/course/material/bookmarked");
       if (!res.ok)
-        throw new Error(`Failed to fetch favorite materials: ${res.status}`);
+        throw new Error(`Failed to fetch bookmarked materials: ${res.status}`);
       const data = await res.json();
-      setFavoriteMaterials(data);
+      setBookmarkedMaterials(data);
     } catch (err) {
-      console.error("Error in NavigationProvider.fetchFavoriteMaterials:", err);
-      setFavoriteMaterials([]);
+      console.error("Error in NavigationProvider.fetchBookmarkedMaterials:", err);
+      setBookmarkedMaterials([]);
     } finally {
-      setIsFavoriteMaterialsLoading(false);
+      setIsBookmarkedMaterialsLoading(false);
     }
   };
 
@@ -218,11 +218,11 @@ export const NavigationProvider = ({
   }, [isSignedIn, isLoaded]);
 
   /**
-   * Fetch favorite materials when user is authenticated.
+   * Fetch bookmarked materials when user is authenticated.
    */
   useEffect(() => {
     if (isSignedIn && isLoaded) {
-      fetchFavoriteMaterials();
+      fetchBookmarkedMaterials();
     }
   }, [isSignedIn, isLoaded]);
 
@@ -236,9 +236,9 @@ export const NavigationProvider = ({
         isRecentlyViewedCoursesLoading,
         isRecentlyViewedMaterialsLoading,
         recentlyViewedMaterials,
-        isFavoriteMaterialsLoading,
-        favoriteMaterials,
-        refreshFavoriteMaterials: fetchFavoriteMaterials,
+        isBookmarkedMaterialsLoading,
+        bookmarkedMaterials,
+        refreshBookmarkedMaterials: fetchBookmarkedMaterials,
       }}
     >
       {children}

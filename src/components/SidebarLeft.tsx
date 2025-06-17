@@ -23,8 +23,8 @@ const SidebarLeft = () => {
   const {
     selectedCourses,
     selectedCourseIsLoading,
-    favoriteMaterials,
-    isFavoriteMaterialsLoading,
+    bookmarkedMaterials,
+    isBookmarkedMaterialsLoading,
   } = useNavigation();
   return (
     <Sidebar variant="floating">
@@ -80,20 +80,20 @@ const SidebarLeft = () => {
           </SidebarMenu>
         </SidebarGroup>
         <SidebarGroup>
-          <SidebarGroupLabel>Favorite Documents</SidebarGroupLabel>
+          <SidebarGroupLabel>Bookmarked Documents</SidebarGroupLabel>
           <SidebarMenu>
-            {isFavoriteMaterialsLoading ? (
+            {isBookmarkedMaterialsLoading ? (
               <div>
                 {[...Array(2)].map((_, i) => (
                   <SidebarMenuSkeleton key={i} />
                 ))}
               </div>
-            ) : favoriteMaterials.length === 0 ? (
+            ) : bookmarkedMaterials.length === 0 ? (
               <div className="flex items-center justify-center h-12 text-muted-foreground">
                 <span>No matches</span>
               </div>
             ) : (
-              favoriteMaterials.map((material) => (
+              bookmarkedMaterials.map((material) => (
                 <SidebarMenuItem key={material.materialId}>
                   <Tooltip>
                     <TooltipTrigger asChild>

@@ -28,9 +28,9 @@ export const useNavigation = () => {
  *     isRecentlyViewedCoursesLoading,
  *     recentlyViewedMaterials,
  *     isRecentlyViewedMaterialsLoading,
- *     favoriteMaterials,
- *     isFavoriteMaterialsLoading,
- *     refreshFavoriteMaterials,
+ *     bookmarkedMaterials,
+ *     isBookmarkedMaterialsLoading,
+ *     refreshBookmarkedMaterials,
  *   } = useNavigation();
  *
  *   return (
@@ -50,7 +50,7 @@ export const useNavigation = () => {
  * - `recentlyViewedMaterials`: Recently opened materials across courses.
  * - `isRecentlyViewedMaterialsLoading`: Boolean indicating loading state of recent materials.
  *
- * - `favoriteMaterials`: Starred/saved materials by the user.
- * - `isFavoriteMaterialsLoading`: Boolean indicating loading state of favorites.
- * - `refreshFavoriteMaterials()`: Manually trigger re-fetch of favorite materials.
+ * - `bookmarkedMaterials`: Starred/saved materials by the user.
+ * - `isBookmarkedMaterialsLoading`: Boolean indicating loading state of Bookmarks.
+ * - `refreshBookmarkedMaterials()`: Manually trigger re-fetch of bookmarked materials.
  */
