@@ -14,11 +14,15 @@ export default function RootLayout({
       <SidebarProvider>
         <NavigationProvider>
           <SidebarLeft />
-          <SidebarInset>{children}</SidebarInset>
+          <SidebarInset>
+            <div className="container mx-auto max-w-7xl px-4 py-6">
+              {children}
+            </div>
+          </SidebarInset>
           <SidebarRight />
         </NavigationProvider>
       </SidebarProvider>
-      <ViewTracker for={"course"}/>
+      <ViewTracker for={"course"} />
     </div>
   );
 }

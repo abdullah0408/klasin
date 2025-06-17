@@ -4,7 +4,8 @@ import React from "react";
 import FolderCard from "./FolderCard";
 import FileCard from "./FileCard";
 import ZipCard from "./ZipCard";
-import { ContantGroup, Material } from "@/generated/prisma";
+import { ContantGroup, Course, Material } from "@/generated/prisma";
+import CourseCard from "./CourseCard";
 
 const ItemCard = ({
   item,
@@ -15,7 +16,8 @@ const ItemCard = ({
     | (Material & {
         ReadMaterial?: { userId: string }[];
         bookmarked?: { userId: string }[];
-      });
+      })
+  | Course;
   onPreview?: (
     material: Material & {
       ReadMaterial?: { userId: string }[];
@@ -49,6 +51,8 @@ const ItemCard = ({
           }
         />
       );
+    case "Course":
+      return <CourseCard course={item as Course} />;
     default:
       return null;
   }
