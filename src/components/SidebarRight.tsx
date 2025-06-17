@@ -149,7 +149,7 @@ const SidebarRight = () => {
                 <SidebarMenuItem key={course.id}>
                   <SidebarMenuButton asChild>
                     <Link
-                      href={`/dashboard/course/${course.id}`}
+                      href={`/dashboard/course/${course.courseId}`}
                       className="w-full flex justify-between items-center gap-2"
                     >
                       <span className="truncate text-foreground font-medium max-w-[70%]">
