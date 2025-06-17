@@ -5,7 +5,7 @@ import { NextResponse } from "next/server";
 /**
  * GET /api/course/material/bookmarked
  *
- * This endpoint returns all bookmarked materials for the currently authenticated Clerk user.
+ * This endpoint returns up to 10 bookmarked materials for the currently authenticated Clerk user.
  * It ensures the returned materials belong to courses the user is enrolled in.
  * Includes material ID, title, file URL, and the associated course title.
  *
@@ -25,11 +25,12 @@ export async function GET(req: Request) {
 
   try {
     //
-    // Fetch all bookmarked materials where:
-    // - The bookmarked is owned by the current user
+    // Fetch up to 10 bookmarked materials where:
+    // - The bookmark is owned by the current user
     // - The associated material belongs to a course the user is enrolled in
     //
     const bookmarkedMaterial = await prisma.bookmarkedMaterial.findMany({
+      take: 10, // Limit the results to 10 bookmarked materials
       where: {
         userId: userId,
         material: {

@@ -1,7 +1,7 @@
 import { prisma } from "@/lib/prisma";
 import { auth } from "@clerk/nextjs/server";
 import { redirect } from "next/navigation";
-import RecentItems from "@/components/RecentItems";
+import DashboardItems from "@/components/DashboardItems";
 
 const Page = async () => {
   const { userId } = await auth();
@@ -102,17 +102,8 @@ const Page = async () => {
     .filter((m): m is NonNullable<typeof m> => Boolean(m))
     .sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime()); // Sort by latest
 
-  const selectedCoursesData = await prisma.user.findUnique({
-    where: { clerkId: userId },
-    include: {
-      courses: true,
-    },
-  });
-  const selectedCourses = selectedCoursesData?.courses ?? [];
-
   return (
-    <RecentItems
-      selectedCourses={selectedCourses}
+    <DashboardItems
       courses={orderedCourses}
       materials={orderedMaterials}
       bookmarks={bookmarkedMaterials}
