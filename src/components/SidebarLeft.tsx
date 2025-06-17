@@ -99,7 +99,7 @@ const SidebarLeft = () => {
                     <TooltipTrigger asChild>
                       <SidebarMenuButton asChild>
                         <Link
-                          href={`/dashboard/course/${material.materialId}`}
+                          href={`/dashboard/course/${material.material.courseId}/material/${material.materialId}`}
                           className="w-full flex justify-between items-center gap-2"
                         >
                           <span className="truncate text-foreground font-medium">

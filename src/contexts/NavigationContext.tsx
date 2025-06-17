@@ -24,6 +24,7 @@ interface NavigationContextType {
       id: string;
       title: string;
       fileUrl: string;
+      courseId: string;
       course: { title: string };
     };
   }[];
@@ -88,6 +89,7 @@ export const NavigationProvider = ({
         id: string;
         title: string;
         fileUrl: string;
+        courseId: string;
         course: { title: string };
       };
     }[]

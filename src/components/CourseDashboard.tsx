@@ -28,6 +28,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Plus } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
+import { SidebarTrigger } from "./ui/sidebar";
 
 type SortOption = "dateDesc" | "dateAsc" | "alphaAsc" | "alphaDesc";
 type FilterType = "all" | "folder" | "file";
@@ -128,7 +129,9 @@ export default function CourseDashboard({
   return (
     <>
       <div className="flex flex-col gap-2 lg:flex-row lg:items-center lg:justify-between lg:gap-4 pb-4">
-        <div className="w-full lg:max-w-sm">
+
+        <div className="w-full lg:max-w-sm flex items-center gap-2">
+                  <SidebarTrigger className="-ml-1" />
           <Input
             placeholder="Search..."
             value={searchTerm}

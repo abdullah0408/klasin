@@ -49,6 +49,7 @@ export async function GET(req: Request) {
             id: true,
             title: true,
             fileUrl: true,
+            courseId: true,
             course: {
               select: {
                 title: true,
