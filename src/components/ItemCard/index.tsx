@@ -10,6 +10,9 @@ import CourseCard from "./CourseCard";
 const ItemCard = ({
   item,
   onPreview,
+  onDeleteMaterialSuccess,
+  onDeleteCourseSuccess,
+  onDeleteGroupSuccess,
 }: {
   item:
     | ContantGroup
@@ -17,17 +20,25 @@ const ItemCard = ({
         ReadMaterial?: { userId: string }[];
         // bookmarked?: { userId: string }[];
       })
-  | Course;
+    | Course;
   onPreview?: (
     material: Material & {
       ReadMaterial?: { userId: string }[];
       // bookmarked?: { userId: string }[];
     }
   ) => void;
+  onDeleteMaterialSuccess?: (deletedId: string) => void;
+  onDeleteCourseSuccess?: (deletedId: string) => void;
+  onDeleteGroupSuccess?: (deletedId: string) => void;
 }) => {
   switch (item.type) {
     case "Folder":
-      return <FolderCard group={item as ContantGroup} />;
+      return (
+        <FolderCard
+          group={item as ContantGroup}
+          onDeleteGroupSuccess={onDeleteGroupSuccess}
+        />
+      );
     case "File":
       return (
         <FileCard
@@ -38,6 +49,7 @@ const ItemCard = ({
             }
           }
           onPreview={onPreview}
+          onDeleteMaterialSuccess={onDeleteMaterialSuccess}
         />
       );
     case "Zip":
@@ -49,10 +61,16 @@ const ItemCard = ({
               // bookmarked?: { userId: string }[];
             }
           }
+          onDeleteMaterialSuccess={onDeleteMaterialSuccess}
         />
       );
     case "Course":
-      return <CourseCard course={item as Course} />;
+      return (
+        <CourseCard
+          course={item as Course}
+          onDeleteCourseSuccess={onDeleteCourseSuccess}
+        />
+      );
     default:
       return null;
   }

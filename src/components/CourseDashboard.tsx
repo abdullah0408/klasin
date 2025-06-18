@@ -47,7 +47,13 @@ export default function CourseDashboard({
 }) {
   const [groupData, setGroupData] = useState(groups);
   const [materialData, setMaterialData] = useState(materials);
-
+  // remove the material locally when FileCard tells us it’s gone
+  const handleDeleteMaterialSuccess = (deletedId: string) => {
+    setMaterialData((prev) => prev.filter((m) => m.id !== deletedId));
+  };
+  const handleDeleteGroupSuccess = (deletedId: string) => {
+    setGroupData((prev) => prev.filter((g) => g.id !== deletedId));
+  };
   const [searchTerm, setSearchTerm] = useState("");
   const [sortOption, setSortOption] = useState<SortOption>("dateDesc");
   const [filterType, setFilterType] = useState<FilterType>("all");
@@ -201,6 +207,8 @@ export default function CourseDashboard({
             key={`${item.type}:${item.id}`}
             item={item.raw}
             onPreview={(m: Material) => setPreviewMaterial(m)}
+            onDeleteMaterialSuccess={handleDeleteMaterialSuccess}
+            onDeleteGroupSuccess={handleDeleteGroupSuccess}
           />
         ))}
       </div>

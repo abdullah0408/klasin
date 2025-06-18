@@ -14,12 +14,11 @@ model User {
   name    String?
   image   String?
 
-  role    String  @default("user")
+  role String @default("user")
 
-  courses          Course[]           @relation("UserCourses")
-  courseViews      CourseView[]
-  MaterialView     MaterialView[]
-  // bookmarkedMaterial BookmarkedMaterial[]
+  courses      Course[]       @relation("UserCourses")
+  courseViews  CourseView[]
+  MaterialView MaterialView[]
   readMaterial ReadMaterial[]
 
   createdAt DateTime @default(now())
@@ -35,6 +34,7 @@ model Course {
   courseViews CourseView[]
   materials   Material[]
   groups      ContantGroup[]
+
   type String @default("Course")
 
   createdAt DateTime @default(now())
@@ -47,8 +47,8 @@ model CourseView {
   courseId String
   viewedAt DateTime @default(now())
 
-  user   User   @relation(fields: [userId], references: [clerkId])
-  course Course @relation(fields: [courseId], references: [id])
+  user   User   @relation(fields: [userId], references: [clerkId], onDelete: Cascade)
+  course Course @relation(fields: [courseId], references: [id], onDelete: Cascade)
 }
 
 model Material {
@@ -62,10 +62,10 @@ model Material {
   courseId String
   groupId  String?
 
-  course       Course             @relation(fields: [courseId], references: [id])
-  group        ContantGroup?      @relation(fields: [groupId], references: [id])
+  course Course        @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  group  ContantGroup? @relation(fields: [groupId], references: [id], onDelete: Cascade)
+
   MaterialView MaterialView[]
-  // bookmarked     BookmarkedMaterial[]
   ReadMaterial ReadMaterial[]
 
   createdAt DateTime @default(now())
@@ -78,29 +78,16 @@ model MaterialView {
   materialId String
   viewedAt   DateTime @default(now())
 
-  user     User     @relation(fields: [userId], references: [clerkId])
-  material Material @relation(fields: [materialId], references: [id])
+  user     User     @relation(fields: [userId], references: [clerkId], onDelete: Cascade)
+  material Material @relation(fields: [materialId], references: [id], onDelete: Cascade)
 }
-
-// model BookmarkedMaterial {
-//   userId     String
-//   materialId String
-
-//   user     User     @relation(fields: [userId], references: [clerkId])
-//   material Material @relation(fields: [materialId], references: [id])
-
-//   createdAt DateTime @default(now())
-//   updatedAt DateTime @updatedAt
-
-//   @@id([userId, materialId])
-// }
 
 model ReadMaterial {
   userId     String
   materialId String
 
-  user     User     @relation(fields: [userId], references: [clerkId])
-  material Material @relation(fields: [materialId], references: [id])
+  user     User     @relation(fields: [userId], references: [clerkId], onDelete: Cascade)
+  material Material @relation(fields: [materialId], references: [id], onDelete: Cascade)
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -115,10 +102,10 @@ model ContantGroup {
 
   courseId      String
   parentGroupId String?
-  type          String @default("Folder")
+  type          String  @default("Folder")
 
-  course      Course         @relation(fields: [courseId], references: [id])
-  parentGroup ContantGroup?  @relation("SubGroups", fields: [parentGroupId], references: [id])
+  course      Course         @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  parentGroup ContantGroup?  @relation("SubGroups", fields: [parentGroupId], references: [id], onDelete: Cascade)
   subGroups   ContantGroup[] @relation("SubGroups")
 
   materials Material[]

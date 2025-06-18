@@ -24,8 +24,12 @@ Props) => {
   const { selectedCourses, selectedCourseIsLoading, refreshSelectedCourses } =
     useNavigation();
   const [dialogOpen, setDialogOpen] = useState(false);
+  const [courseData, setCourseData] = useState<Course[]>(courses);
 
-  console.log("Selected Courses:", selectedCourses);
+  const handleDeleteCourseSuccess = (deletedId: string) => {
+    refreshSelectedCourses();
+    setCourseData((prev) => prev.filter((c) => c.id !== deletedId));
+  };
   return (
     <>
       <div className="p-6 space-y-6">
@@ -56,8 +60,12 @@ Props) => {
 
         <h1 className="text-2xl font-bold">Recently Viewed Courses</h1>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-          {courses.map((course) => (
-            <ItemCard key={course.id} item={{ ...course, type: "Course" }} />
+          {courseData.map((course) => (
+            <ItemCard
+              key={course.id}
+              item={{ ...course, type: "Course" }}
+              onDeleteCourseSuccess={handleDeleteCourseSuccess}
+            />
           ))}
         </div>
 

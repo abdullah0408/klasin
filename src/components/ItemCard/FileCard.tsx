@@ -27,14 +27,24 @@ import {
   DropdownMenuTrigger,
 } from "../ui/dropdown-menu";
 import { Button } from "../ui/button";
-import { formatDistanceToNow } from "date-fns";
-import { Material } from "@/generated/prisma";
 import { Switch } from "../ui/switch";
 import { Label } from "../ui/label";
+import { formatDistanceToNow } from "date-fns";
+import { Material } from "@/generated/prisma";
+import { toast } from "sonner";
+import {
+  Dialog,
+  DialogContent,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "../ui/dialog";
+import { useAuth } from "@/hooks/useAuth";
 
 const FileCard = ({
   material,
   onPreview,
+  onDeleteMaterialSuccess,
 }: {
   material: Material & {
     ReadMaterial?: { userId: string }[];
@@ -46,6 +56,7 @@ const FileCard = ({
       // bookmarked?: { userId: string }[];
     }
   ) => void;
+  onDeleteMaterialSuccess?: (deletedId: string) => void;
 }) => {
   const [isHovered, setIsHovered] = useState(false);
   const [isRead, setIsRead] = useState(
@@ -57,7 +68,10 @@ const FileCard = ({
   const [readLoading, setReadLoading] = useState(false);
   // const [bookmarkLoading, setBookmarkLoading] = useState(false);
 
+  const [deleteOpen, setDeleteOpen] = useState(false);
+  const [deleting, setDeleting] = useState(false);
   const router = useRouter();
+  const { userDetails } = useAuth();
 
   const handleDoubleClick = () => {
     router.push(
@@ -78,13 +92,38 @@ const FileCard = ({
 
       if (res.ok) {
         setIsRead(val);
+        toast.success(`Marked as ${val ? "read" : "unread"} successfully`);
       } else {
         console.error("Failed to update read status");
+        toast.error("Failed to update read status");
       }
     } catch (err) {
       console.error("Error toggling read status:", err);
+      toast.error("Error toggling read status");
     } finally {
       setReadLoading(false);
+    }
+  };
+
+  const handleDelete = async () => {
+    setDeleting(true);
+    try {
+      const res = await fetch(
+        `/api/material/delete?materialId=${material.id}`,
+        { method: "DELETE" }
+      );
+      if (res.ok) {
+        toast.success("Material deleted successfully");
+        onDeleteMaterialSuccess?.(material.id);
+      } else {
+        throw new Error();
+      }
+    } catch {
+      console.error("Delete failed");
+      toast.error("Failed to delete material");
+    } finally {
+      setDeleting(false);
+      setDeleteOpen(false);
     }
   };
 
@@ -112,97 +151,98 @@ const FileCard = ({
   // };
 
   return (
-    <ContextMenu>
-      <ContextMenuTrigger>
-        <Card
-          onMouseEnter={() => setIsHovered(true)}
-          onMouseLeave={() => setIsHovered(false)}
-          onDoubleClick={handleDoubleClick}
-          className="hover:shadow-md transition-all duration-200 hover:bg-accent/50 cursor-pointer border border-border/50 relative py-0"
-        >
-          <CardContent className="flex items-center p-4 space-x-3">
-            <div className="flex-shrink-0">
-              {isHovered ? <FileText className="text-primary" /> : <File />}
-            </div>
-            <div className="flex-1 min-w-0">
+    <>
+      <ContextMenu>
+        <ContextMenuTrigger>
+          <Card
+            onMouseEnter={() => setIsHovered(true)}
+            onMouseLeave={() => setIsHovered(false)}
+            onDoubleClick={handleDoubleClick}
+            className="hover:shadow-md transition-all duration-200 hover:bg-accent/50 cursor-pointer border border-border/50 relative py-0"
+          >
+            <CardContent className="flex items-center p-4 space-x-3">
+              <div className="flex-shrink-0">
+                {isHovered ? <FileText className="text-primary" /> : <File />}
+              </div>
+              <div className="flex-1 min-w-0">
+                <div className="flex items-center space-x-1">
+                  <p className="text-sm font-medium text-foreground truncate group-hover:text-primary transition-colors">
+                    {material.title}
+                  </p>
+                </div>
+                <div className="flex items-center space-x-1 text-xs text-muted-foreground">
+                  <span className="truncate">
+                    {formatDistanceToNow(new Date(material.createdAt), {
+                      addSuffix: true,
+                    })}
+                  </span>
+                </div>
+              </div>
               <div className="flex items-center space-x-1">
-                <p className="text-sm font-medium text-foreground truncate group-hover:text-primary transition-colors">
-                  {material.title}
-                </p>
-              </div>
-              <div className="flex items-center space-x-1 text-xs text-muted-foreground">
-                <span className="truncate">
-                  {formatDistanceToNow(new Date(material.createdAt), {
-                    addSuffix: true,
-                  })}
-                </span>
-              </div>
-            </div>
-            <div className="flex items-center space-x-1">
-              <Button
-                variant="ghost"
-                size="icon"
-                className="h-8 w-8"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  onPreview?.(material);
-                }}
-              >
-                <Eye className="w-4 h-4" />
-              </Button>
-              <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    className="h-8 w-8"
-                    onClick={(e) => e.stopPropagation()}
-                  >
-                    <MoreVertical className="w-4 h-4" />
-                  </Button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent align="end" className="w-56">
-                  {/* Primary actions */}
-                  <DropdownMenuItem
-                    onClick={() =>
-                      router.push(
-                        `/dashboard/course/${material.courseId}/material/${material.id}`
-                      )
-                    }
-                  >
-                    <File className="w-4 h-4 mr-2" />
-                    Open
-                  </DropdownMenuItem>
-                  <DropdownMenuItem onClick={() => onPreview?.(material)}>
-                    <Eye className="w-4 h-4 mr-2" />
-                    Preview
-                  </DropdownMenuItem>
-                  <DropdownMenuItem asChild>
-                    <a
-                      href={`${process.env.NEXT_PUBLIC_R2_Public_URL}/${material.fileUrl}`}
-                      download
-                      target="_blank"
-                      className="flex items-center w-full"
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="h-8 w-8"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    onPreview?.(material);
+                  }}
+                >
+                  <Eye className="w-4 h-4" />
+                </Button>
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      className="h-8 w-8"
+                      onClick={(e) => e.stopPropagation()}
                     >
-                      <Download className="w-4 h-4 mr-2" />
-                      Download
-                    </a>
-                  </DropdownMenuItem>
+                      <MoreVertical className="w-4 h-4" />
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent align="end" className="w-56">
+                    {/* Primary actions */}
+                    <DropdownMenuItem
+                      onClick={() =>
+                        router.push(
+                          `/dashboard/course/${material.courseId}/material/${material.id}`
+                        )
+                      }
+                    >
+                      <File className="w-4 h-4 mr-2" />
+                      Open
+                    </DropdownMenuItem>
+                    <DropdownMenuItem onClick={() => onPreview?.(material)}>
+                      <Eye className="w-4 h-4 mr-2" />
+                      Preview
+                    </DropdownMenuItem>
+                    <DropdownMenuItem asChild>
+                      <a
+                        href={`${process.env.NEXT_PUBLIC_R2_Public_URL}/${material.fileUrl}`}
+                        download
+                        target="_blank"
+                        className="flex items-center w-full"
+                      >
+                        <Download className="w-4 h-4 mr-2" />
+                        Download
+                      </a>
+                    </DropdownMenuItem>
 
-                  {/* Read/Bookmark toggles */}
-                  <div className="flex items-center px-2 py-1.5 space-x-2 text-sm cursor-default select-none">
-                    <Switch
-                      id="read-switch"
-                      checked={isRead}
-                      onCheckedChange={(val) => toggleRead(val)}
-                      disabled={readLoading}
-                      className="cursor-pointer border-foreground-"
-                    />
-                    <Label htmlFor="read-switch" className="cursor-pointer">
-                      {isRead ? "Mark as Unread" : "Mark as Read"}
-                    </Label>
-                  </div>
-                  {/* <DropdownMenuItem
+                    {/* Read/Bookmark toggles */}
+                    <div className="flex items-center px-2 py-1.5 space-x-2 text-sm cursor-default select-none">
+                      <Switch
+                        id="read-switch"
+                        checked={isRead}
+                        onCheckedChange={(val) => toggleRead(val)}
+                        disabled={readLoading}
+                        className="cursor-pointer border-foreground-"
+                      />
+                      <Label htmlFor="read-switch" className="cursor-pointer">
+                        {isRead ? "Mark as Unread" : "Mark as Read"}
+                      </Label>
+                    </div>
+                    {/* <DropdownMenuItem
                     disabled={bookmarkLoading}
                     className={
                       bookmarkLoading ? "opacity-50 cursor-not-allowed" : ""
@@ -222,63 +262,74 @@ const FileCard = ({
                     {isBookMarked ? "Remove Bookmark" : "Add to Bookmarks"}
                   </DropdownMenuItem> */}
 
-                  {/* Destructive action last */}
-                  <DropdownMenuItem className="!text-red-500 hover:!text-red-600 hover:!bg-[rgba(239,68,68,0.1)]">
-                    <Trash2 className="w-4 h-4 mr-2 text-red-500 hover:!text-red-600" />
-                    Delete
-                  </DropdownMenuItem>
-                </DropdownMenuContent>
-              </DropdownMenu>
-            </div>
-          </CardContent>
-        </Card>
-      </ContextMenuTrigger>
+                    {/* Destructive action last */}
+                    {userDetails?.role === "admin" && (
+                      <DropdownMenuItem
+                        className="!text-red-500 hover:!text-red-600 hover:!bg-[rgba(239,68,68,0.1)]"
+                        asChild
+                      >
+                        <Button
+                          variant="ghost"
+                          className="w-full justify-start text-red-500"
+                          onClick={() => setDeleteOpen(true)}
+                        >
+                          <Trash2 className="w-4 h-4 mr-2 text-red-500 hover:!text-red-600" />
+                          Delete
+                        </Button>
+                      </DropdownMenuItem>
+                    )}
+                  </DropdownMenuContent>
+                </DropdownMenu>
+              </div>
+            </CardContent>
+          </Card>
+        </ContextMenuTrigger>
 
-      <ContextMenuContent className="w-48">
-        {/* Primary actions */}
-        <ContextMenuItem
-          onClick={() =>
-            router.push(
-              `/dashboard/course/${material.courseId}/material/${material.id}`
-            )
-          }
-        >
-          <File className="w-4 h-4 mr-2" />
-          Open
-        </ContextMenuItem>
-
-        <ContextMenuItem onClick={() => onPreview?.(material)}>
-          <Eye className="w-4 h-4 mr-2" />
-          Preview
-        </ContextMenuItem>
-
-        <ContextMenuItem asChild>
-          <a
-            href={`${process.env.NEXT_PUBLIC_R2_Public_URL}/${material.fileUrl}`}
-            download
-            target="_blank"
-            className="flex items-center w-full"
+        <ContextMenuContent className="w-48">
+          {/* Primary actions */}
+          <ContextMenuItem
+            onClick={() =>
+              router.push(
+                `/dashboard/course/${material.courseId}/material/${material.id}`
+              )
+            }
           >
-            <Download className="w-4 h-4 mr-2" />
-            Download
-          </a>
-        </ContextMenuItem>
+            <File className="w-4 h-4 mr-2" />
+            Open
+          </ContextMenuItem>
 
-        {/* Toggle switches */}
-        <div className="flex items-center px-2 py-1.5 space-x-2 text-sm cursor-default select-none">
-          <Switch
-            id="read-switch"
-            checked={isRead}
-            onCheckedChange={(val) => toggleRead(val)}
-            disabled={readLoading}
-            className="cursor-pointer border-foreground-"
-          />
-          <Label htmlFor="read-switch" className="cursor-pointer">
-            {isRead ? "Mark as Unread" : "Mark as Read"}
-          </Label>
-        </div>
+          <ContextMenuItem onClick={() => onPreview?.(material)}>
+            <Eye className="w-4 h-4 mr-2" />
+            Preview
+          </ContextMenuItem>
 
-        {/* <ContextMenuItem
+          <ContextMenuItem asChild>
+            <a
+              href={`${process.env.NEXT_PUBLIC_R2_Public_URL}/${material.fileUrl}`}
+              download
+              target="_blank"
+              className="flex items-center w-full"
+            >
+              <Download className="w-4 h-4 mr-2" />
+              Download
+            </a>
+          </ContextMenuItem>
+
+          {/* Toggle switches */}
+          <div className="flex items-center px-2 py-1.5 space-x-2 text-sm cursor-default select-none">
+            <Switch
+              id="read-switch"
+              checked={isRead}
+              onCheckedChange={(val) => toggleRead(val)}
+              disabled={readLoading}
+              className="cursor-pointer border-foreground-"
+            />
+            <Label htmlFor="read-switch" className="cursor-pointer">
+              {isRead ? "Mark as Unread" : "Mark as Read"}
+            </Label>
+          </div>
+
+          {/* <ContextMenuItem
           disabled={bookmarkLoading}
           className={bookmarkLoading ? "opacity-50 cursor-not-allowed" : ""}
           onClick={(e) => {
@@ -296,13 +347,52 @@ const FileCard = ({
           {isBookMarked ? "Remove Bookmark" : "Add to Bookmarks"}
         </ContextMenuItem> */}
 
-        {/* Destructive action */}
-        <ContextMenuItem className="!text-red-500 hover:!text-red-600 hover:!bg-[rgba(239,68,68,0.1)]">
-          <Trash2 className="w-4 h-4 mr-2 text-red-500 hover:!text-red-600" />
-          Delete
-        </ContextMenuItem>
-      </ContextMenuContent>
-    </ContextMenu>
+          {/* Destructive action */}
+          {userDetails?.role === "admin" && (
+            <ContextMenuItem
+              className="!text-red-500 hover:!text-red-600 hover:!bg-[rgba(239,68,68,0.1)]"
+              asChild
+            >
+              <Button
+                variant="ghost"
+                className="w-full justify-start text-red-500"
+                onClick={() => setDeleteOpen(true)}
+              >
+                <Trash2 className="w-4 h-4 mr-2 text-red-500 hover:!text-red-600" />
+                Delete
+              </Button>
+            </ContextMenuItem>
+          )}
+        </ContextMenuContent>
+      </ContextMenu>
+      <Dialog open={deleteOpen} onOpenChange={setDeleteOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Confirm Deletion</DialogTitle>
+          </DialogHeader>
+          <p>
+            Are you sure you want to delete "{material.title}"? This action
+            cannot be undone.
+          </p>
+          <DialogFooter>
+            <Button
+              variant="secondary"
+              onClick={() => setDeleteOpen(false)}
+              disabled={deleting}
+            >
+              Cancel
+            </Button>
+            <Button
+              onClick={handleDelete}
+              disabled={deleting}
+              className="bg-red-500 hover:bg-red-600 text-white"
+            >
+              {deleting ? "Deleting..." : "Delete"}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+    </>
   );
 };
 

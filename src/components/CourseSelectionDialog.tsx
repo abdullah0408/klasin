@@ -12,7 +12,7 @@ import { Button } from "./ui/button";
 import { Checkbox } from "./ui/checkbox";
 import { Course } from "@/generated/prisma";
 import { ScrollArea } from "./ui/scroll-area";
-import { Sparkles, BookOpen } from "lucide-react";
+import { Sparkles, BookOpen, BookCopy } from "lucide-react";
 import { useNavigation } from "@/hooks/useNavigation";
 
 type Props = {
@@ -100,7 +100,7 @@ export default function CourseSelectionDialog({
             ))
           ) : courses.length === 0 ? (
             <div className="flex flex-col items-center justify-center py-12 text-center text-muted-foreground gap-2">
-              <BookOpen className="h-6 w-6" />
+              <BookCopy className="h-6 w-6" />
               <p className="text-sm">No courses available.</p>
             </div>
           ) : (
@@ -132,12 +132,12 @@ export default function CourseSelectionDialog({
             <div className="text-xs text-muted-foreground">
               {selectedIds.size === 0 ? (
                 <span className="flex items-center gap-1">
-                  <Sparkles className="h-4 w-4" />
+                  <BookCopy className="h-4 w-4" />
                   Add your first course
                 </span>
               ) : (
                 <span className="flex items-center gap-1">
-                  <BookOpen className="h-4 w-4" />
+                  <BookCopy className="h-4 w-4" />
                   {selectedIds.size} course{selectedIds.size > 1 && "s"}{" "}
                   selected
                 </span>
