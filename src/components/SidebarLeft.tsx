@@ -27,8 +27,8 @@ const SidebarLeft = () => {
   const {
     selectedCourses,
     selectedCourseIsLoading,
-    bookmarkedMaterials,
-    isBookmarkedMaterialsLoading,
+    // bookmarkedMaterials,
+    // isBookmarkedMaterialsLoading,
   } = useNavigation();
 
   return (
@@ -107,7 +107,7 @@ const SidebarLeft = () => {
             </SidebarMenu>
           </SidebarGroup>
 
-          <SidebarGroup>
+          {/* <SidebarGroup>
             <SidebarGroupLabel>Bookmarked Documents</SidebarGroupLabel>
             <SidebarMenu>
               {isBookmarkedMaterialsLoading ? (
@@ -146,7 +146,7 @@ const SidebarLeft = () => {
                 ))
               )}
             </SidebarMenu>
-          </SidebarGroup>
+          </SidebarGroup> */}
         </SidebarContent>
 
         <SidebarFooter>

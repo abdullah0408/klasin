@@ -61,10 +61,10 @@ const Page = async () => {
         where: { userId },
         select: { userId: true },
       },
-      bookmarked: {
-        where: { userId },
-        select: { userId: true },
-      },
+      // bookmarked: {
+      //   where: { userId },
+      //   select: { userId: true },
+      // },
     },
   });
 
@@ -81,47 +81,47 @@ const Page = async () => {
     .filter((m): m is NonNullable<typeof m> => Boolean(m))
     .sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime()); // Sort by latest
 
-  const bookmarked = await prisma.bookmarkedMaterial.findMany({
-    where: {
-      userId,
-      material: {
-        course: {
-          users: {
-            some: {
-              clerkId: userId,
-            },
-          },
-        },
-      },
-    },
-    select: {
-      createdAt: true,
-      material: {
-        include: {
-          course: true,
-          ReadMaterial: {
-            where: { userId },
-            select: { userId: true },
-          },
-          bookmarked: {
-            where: { userId },
-            select: { userId: true },
-          },
-        },
-      },
-    },
-  });
+  // const bookmarked = await prisma.bookmarkedMaterial.findMany({
+  //   where: {
+  //     userId,
+  //     material: {
+  //       course: {
+  //         users: {
+  //           some: {
+  //             clerkId: userId,
+  //           },
+  //         },
+  //       },
+  //     },
+  //   },
+  //   select: {
+  //     createdAt: true,
+  //     material: {
+  //       include: {
+  //         course: true,
+  //         ReadMaterial: {
+  //           where: { userId },
+  //           select: { userId: true },
+  //         },
+  //         bookmarked: {
+  //           where: { userId },
+  //           select: { userId: true },
+  //         },
+  //       },
+  //     },
+  //   },
+  // });
 
-  const bookmarkedMaterials = bookmarked
-    .map((b) => (b.material ? { ...b.material, createdAt: b.createdAt } : null))
-    .filter((m): m is NonNullable<typeof m> => Boolean(m))
-    .sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime()); // Sort by latest
+  // const bookmarkedMaterials = bookmarked
+  //   .map((b) => (b.material ? { ...b.material, createdAt: b.createdAt } : null))
+  //   .filter((m): m is NonNullable<typeof m> => Boolean(m))
+  //   .sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime()); // Sort by latest
 
   return (
     <DashboardItems
       courses={orderedCourses}
       materials={orderedMaterials}
-      bookmarks={bookmarkedMaterials}
+      // bookmarks={bookmarkedMaterials}
     />
   );
 };

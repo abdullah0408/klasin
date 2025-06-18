@@ -12,10 +12,14 @@ import CourseSelectionDialog from "./CourseSelectionDialog";
 type Props = {
   courses: Course[];
   materials: (Material & { course: Course })[];
-  bookmarks: (Material & { course: { title: string } })[];
+  // bookmarks: (Material & { course: { title: string } })[];
 };
 
-const DashboardItems = ({ courses, materials, bookmarks }: Props) => {
+const DashboardItems = ({
+  courses,
+  materials,
+}: // bookmarks
+Props) => {
   const [previewMaterial, setPreviewMaterial] = useState<Material | null>(null);
   const { selectedCourses, selectedCourseIsLoading, refreshSelectedCourses } =
     useNavigation();
@@ -68,7 +72,7 @@ const DashboardItems = ({ courses, materials, bookmarks }: Props) => {
           ))}
         </div>
 
-        <h1 className="text-2xl font-bold">Bookmarked Materials</h1>
+        {/* <h1 className="text-2xl font-bold">Bookmarked Materials</h1>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
           {bookmarks.map((material) => (
             <ItemCard
@@ -77,7 +81,7 @@ const DashboardItems = ({ courses, materials, bookmarks }: Props) => {
               onPreview={(m: Material) => setPreviewMaterial(m)}
             />
           ))}
-        </div>
+        </div> */}
       </div>
 
       <FilePreviewDialog

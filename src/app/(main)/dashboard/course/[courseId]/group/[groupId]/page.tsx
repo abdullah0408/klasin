@@ -38,10 +38,10 @@ export default async function CourseDashboardPage({
         where: { userId },
         select: { userId: true },
       },
-      bookmarked: {
-        where: { userId },
-        select: { userId: true },
-      }
+      // bookmarked: {
+      //   where: { userId },
+      //   select: { userId: true },
+      // }
     },
   });
 

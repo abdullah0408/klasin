@@ -17,18 +17,18 @@ interface NavigationContextType {
     courseId: string;
     courseTitle: string;
   })[];
-  isBookmarkedMaterialsLoading: boolean;
-  bookmarkedMaterials: {
-    materialId: string;
-    material: {
-      id: string;
-      title: string;
-      fileUrl: string;
-      courseId: string;
-      course: { title: string };
-    };
-  }[];
-  refreshBookmarkedMaterials: () => void;
+  // isBookmarkedMaterialsLoading: boolean;
+  // bookmarkedMaterials: {
+  //   materialId: string;
+  //   material: {
+  //     id: string;
+  //     title: string;
+  //     fileUrl: string;
+  //     courseId: string;
+  //     course: { title: string };
+  //   };
+  // }[];
+  // refreshBookmarkedMaterials: () => void;
 }
 
 export const NavigationContext = createContext<
@@ -79,39 +79,39 @@ export const NavigationProvider = ({
     })[]
   >([]);
 
-  // Bookmarked materials
-  const [isBookmarkedMaterialsLoading, setIsBookmarkedMaterialsLoading] =
-    useState(true);
-  const [bookmarkedMaterials, setBookmarkedMaterials] = useState<
-    {
-      materialId: string;
-      material: {
-        id: string;
-        title: string;
-        fileUrl: string;
-        courseId: string;
-        course: { title: string };
-      };
-    }[]
-  >([]);
+  // // Bookmarked materials
+  // const [isBookmarkedMaterialsLoading, setIsBookmarkedMaterialsLoading] =
+  //   useState(true);
+  // const [bookmarkedMaterials, setBookmarkedMaterials] = useState<
+  //   {
+  //     materialId: string;
+  //     material: {
+  //       id: string;
+  //       title: string;
+  //       fileUrl: string;
+  //       courseId: string;
+  //       course: { title: string };
+  //     };
+  //   }[]
+  // >([]);
 
-  /**
-   * Fetch bookmarked materials for the current user.
-   */
-  const fetchBookmarkedMaterials = async () => {
-    try {
-      const res = await fetch("/api/course/material/bookmarked");
-      if (!res.ok)
-        throw new Error(`Failed to fetch bookmarked materials: ${res.status}`);
-      const data = await res.json();
-      setBookmarkedMaterials(data);
-    } catch (err) {
-      console.error("Error in NavigationProvider.fetchBookmarkedMaterials:", err);
-      setBookmarkedMaterials([]);
-    } finally {
-      setIsBookmarkedMaterialsLoading(false);
-    }
-  };
+  // /**
+  //  * Fetch bookmarked materials for the current user.
+  //  */
+  // const fetchBookmarkedMaterials = async () => {
+  //   try {
+  //     const res = await fetch("/api/course/material/bookmarked");
+  //     if (!res.ok)
+  //       throw new Error(`Failed to fetch bookmarked materials: ${res.status}`);
+  //     const data = await res.json();
+  //     setBookmarkedMaterials(data);
+  //   } catch (err) {
+  //     console.error("Error in NavigationProvider.fetchBookmarkedMaterials:", err);
+  //     setBookmarkedMaterials([]);
+  //   } finally {
+  //     setIsBookmarkedMaterialsLoading(false);
+  //   }
+  // };
 
   /**
    * Fetch recently viewed materials for the current user.
@@ -219,14 +219,14 @@ export const NavigationProvider = ({
     }
   }, [isSignedIn, isLoaded]);
 
-  /**
-   * Fetch bookmarked materials when user is authenticated.
-   */
-  useEffect(() => {
-    if (isSignedIn && isLoaded) {
-      fetchBookmarkedMaterials();
-    }
-  }, [isSignedIn, isLoaded]);
+  // /**
+  //  * Fetch bookmarked materials when user is authenticated.
+  //  */
+  // useEffect(() => {
+  //   if (isSignedIn && isLoaded) {
+  //     fetchBookmarkedMaterials();
+  //   }
+  // }, [isSignedIn, isLoaded]);
 
   return (
     <NavigationContext.Provider
@@ -238,9 +238,9 @@ export const NavigationProvider = ({
         isRecentlyViewedCoursesLoading,
         isRecentlyViewedMaterialsLoading,
         recentlyViewedMaterials,
-        isBookmarkedMaterialsLoading,
-        bookmarkedMaterials,
-        refreshBookmarkedMaterials: fetchBookmarkedMaterials,
+        // isBookmarkedMaterialsLoading,
+        // bookmarkedMaterials,
+        // refreshBookmarkedMaterials: fetchBookmarkedMaterials,
       }}
     >
       {children}

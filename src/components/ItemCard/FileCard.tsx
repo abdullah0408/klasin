@@ -15,9 +15,9 @@ import {
   Eye,
   FileText,
   Trash2,
-  BookMarked,
-  BookmarkCheck,
-  Bookmark,
+  // BookMarked,
+  // BookmarkCheck,
+  // Bookmark,
   Download,
 } from "lucide-react";
 import {
@@ -38,12 +38,12 @@ const FileCard = ({
 }: {
   material: Material & {
     ReadMaterial?: { userId: string }[];
-    bookmarked?: { userId: string }[];
+    // bookmarked?: { userId: string }[];
   };
   onPreview?: (
     material: Material & {
       ReadMaterial?: { userId: string }[];
-      bookmarked?: { userId: string }[];
+      // bookmarked?: { userId: string }[];
     }
   ) => void;
 }) => {
@@ -51,11 +51,11 @@ const FileCard = ({
   const [isRead, setIsRead] = useState(
     !!((material.ReadMaterial?.length ?? 0) > 0)
   );
-  const [isBookMarked, setIsBookMarked] = useState(
-    !!((material.bookmarked?.length ?? 0) > 0)
-  );
+  // const [isBookMarked, setIsBookMarked] = useState(
+  //   !!((material.bookmarked?.length ?? 0) > 0)
+  // );
   const [readLoading, setReadLoading] = useState(false);
-  const [bookmarkLoading, setBookmarkLoading] = useState(false);
+  // const [bookmarkLoading, setBookmarkLoading] = useState(false);
 
   const router = useRouter();
 
@@ -88,28 +88,28 @@ const FileCard = ({
     }
   };
 
-  const toggleBookmark = async (val: boolean) => {
-    try {
-      setBookmarkLoading(true);
-      const res = await fetch("/api/material/bookmark", {
-        method: "POST",
-        body: JSON.stringify({
-          materialId: material.id,
-          isRead: val,
-        }),
-      });
+  // const toggleBookmark = async (val: boolean) => {
+  //   try {
+  //     setBookmarkLoading(true);
+  //     const res = await fetch("/api/material/bookmark", {
+  //       method: "POST",
+  //       body: JSON.stringify({
+  //         materialId: material.id,
+  //         isRead: val,
+  //       }),
+  //     });
 
-      if (res.ok) {
-        setIsBookMarked(val);
-      } else {
-        console.error("Failed to update bookmark status");
-      }
-    } catch (err) {
-      console.error("Error toggling bookmark status:", err);
-    } finally {
-      setBookmarkLoading(false);
-    }
-  };
+  //     if (res.ok) {
+  //       setIsBookMarked(val);
+  //     } else {
+  //       console.error("Failed to update bookmark status");
+  //     }
+  //   } catch (err) {
+  //     console.error("Error toggling bookmark status:", err);
+  //   } finally {
+  //     setBookmarkLoading(false);
+  //   }
+  // };
 
   return (
     <ContextMenu>
@@ -202,7 +202,7 @@ const FileCard = ({
                       {isRead ? "Mark as Unread" : "Mark as Read"}
                     </Label>
                   </div>
-                  <DropdownMenuItem
+                  {/* <DropdownMenuItem
                     disabled={bookmarkLoading}
                     className={
                       bookmarkLoading ? "opacity-50 cursor-not-allowed" : ""
@@ -220,7 +220,7 @@ const FileCard = ({
                       <Bookmark className="w-4 h-4 mr-2" />
                     )}
                     {isBookMarked ? "Remove Bookmark" : "Add to Bookmarks"}
-                  </DropdownMenuItem>
+                  </DropdownMenuItem> */}
 
                   {/* Destructive action last */}
                   <DropdownMenuItem className="!text-red-500 hover:!text-red-600 hover:!bg-[rgba(239,68,68,0.1)]">
@@ -278,7 +278,7 @@ const FileCard = ({
           </Label>
         </div>
 
-        <ContextMenuItem
+        {/* <ContextMenuItem
           disabled={bookmarkLoading}
           className={bookmarkLoading ? "opacity-50 cursor-not-allowed" : ""}
           onClick={(e) => {
@@ -294,7 +294,7 @@ const FileCard = ({
             <Bookmark className="w-4 h-4 mr-2" />
           )}
           {isBookMarked ? "Remove Bookmark" : "Add to Bookmarks"}
-        </ContextMenuItem>
+        </ContextMenuItem> */}
 
         {/* Destructive action */}
         <ContextMenuItem className="!text-red-500 hover:!text-red-600 hover:!bg-[rgba(239,68,68,0.1)]">

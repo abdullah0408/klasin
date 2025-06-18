@@ -40,9 +40,10 @@ export default function CourseDashboard({
   groups: ContantGroup[];
   materials: (Material & {
     ReadMaterial?: { userId: string }[];
-  } & {
-    bookmarked?: { userId: string }[];
   })[];
+  //  & {
+  //   bookmarked?: { userId: string }[];
+  // }
 }) {
   const [groupData, setGroupData] = useState(groups);
   const [materialData, setMaterialData] = useState(materials);
@@ -129,9 +130,8 @@ export default function CourseDashboard({
   return (
     <>
       <div className="flex flex-col gap-2 lg:flex-row lg:items-center lg:justify-between lg:gap-4 pb-4">
-
         <div className="w-full lg:max-w-sm flex items-center gap-2">
-                  <SidebarTrigger className="-ml-1" />
+          <SidebarTrigger className="-ml-1" />
           <Input
             placeholder="Search..."
             value={searchTerm}

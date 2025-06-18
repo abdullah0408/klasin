@@ -15,13 +15,13 @@ const ItemCard = ({
     | ContantGroup
     | (Material & {
         ReadMaterial?: { userId: string }[];
-        bookmarked?: { userId: string }[];
+        // bookmarked?: { userId: string }[];
       })
   | Course;
   onPreview?: (
     material: Material & {
       ReadMaterial?: { userId: string }[];
-      bookmarked?: { userId: string }[];
+      // bookmarked?: { userId: string }[];
     }
   ) => void;
 }) => {
@@ -34,7 +34,7 @@ const ItemCard = ({
           material={
             item as Material & {
               ReadMaterial?: { userId: string }[];
-              bookmarked?: { userId: string }[];
+              // bookmarked?: { userId: string }[];
             }
           }
           onPreview={onPreview}
@@ -46,7 +46,7 @@ const ItemCard = ({
           material={
             item as Material & {
               ReadMaterial?: { userId: string }[];
-              bookmarked?: { userId: string }[];
+              // bookmarked?: { userId: string }[];
             }
           }
         />
